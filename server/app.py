@@ -36,6 +36,23 @@ def find_id(id):
     else:
         return jsonify({"message": f"Earthquake {id} not found."}), 404
 
+@app.route("/earthquakes/magnitude/<float:magnitude>")
+def earthquakes_with_min_magnitude(magnitude):
+    earthquakes = db.session.query(Earthquake).filter(Earthquake.magnitude >= magnitude).all()
+    response = {
+        "count": len(earthquakes),
+        "quakes": [
+            {
+                "id": earthquake.id,
+                "location": earthquake.location,
+                "magnitude": earthquake.magnitude,
+                "year": earthquake.year,
+            }
+            for earthquake in earthquakes
+        ],
+    }
+    return jsonify(response), 200
+
 
 
 if __name__ == '__main__':
